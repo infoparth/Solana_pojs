@@ -20,24 +20,24 @@ const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 console.log("Public Key of the generated keypair", publicKey);
 
 // Get the wallet balance from a given private key
-const getWalletBalance = async () => {
+const getWalletBalance = async (wallPub) => {
     try {
         // Connect to the Devnet
         const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-        console.log("Connection object is:", connection);
+        // console.log("Connection object is:", connection);
 
         // Make a wallet (keypair) from privateKey and get its balance
         const myWallet = await Keypair.fromSecretKey(privateKey);
         const walletBalance = await connection.getBalance(
-            new PublicKey(newPair.publicKey)
+            new PublicKey(wallPub)
         );
-        console.log(`Wallet balance: ${parseInt(walletBalance) / LAMPORTS_PER_SOL} SOL`);
+        console.log(`Wallet balance: ${wallPub} is ${parseInt(walletBalance) / LAMPORTS_PER_SOL} SOL`);
     } catch (err) {
         console.log(err);
     }
 };
 
-const airDropSol = async () => {
+const airDropSol = async (wallPub) => {
     try {
         // Connect to the Devnet and make a wallet from privateKey
         const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
@@ -46,7 +46,7 @@ const airDropSol = async () => {
         // Request airdrop of 2 SOL to the wallet
         console.log("Airdropping some SOL to my wallet!");
         const fromAirDropSignature = await connection.requestAirdrop(
-            new PublicKey(myWallet.publicKey),
+            new PublicKey(wallPub),
             2 * LAMPORTS_PER_SOL
         );
         await connection.confirmTransaction(fromAirDropSignature);
@@ -57,9 +57,17 @@ const airDropSol = async () => {
 
 // Show the wallet balance before and after airdropping SOL
 const mainFunction = async () => {
-    await getWalletBalance();
-    await airDropSol();
-    await getWalletBalance();
+    
+    const wallPub = process.argv[2]; // Assuming the public key is passed as the third argument
+    if (wallPub) {
+        await getWalletBalance(wallPub);
+        await airDropSol(wallPub);
+        await getWalletBalance(wallPub);
+    } else {
+        console.log("Please provide a public key as a command-line argument.");
+    }
+    
 }
 
 mainFunction();
+
