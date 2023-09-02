@@ -7,9 +7,9 @@ This repository houses the code to effortlessly generate new key pairs on the So
 To get started with this project, simply follow these steps:
 
 1. Clone the Repository: Begin by cloning this repository to your local machine using the following command:
-   ```
-   git clone
-   ```
+```
+git clone
+```
 1. Navigate to the Project Directory: Use the cd command to move into the project directory:
 ```
 cd Solana_pojs
